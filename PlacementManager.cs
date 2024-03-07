@@ -98,6 +98,7 @@ public class PlacementManager : MonoBehaviour
         foreach (var structure in temporaryRoadObjects)
         {
             structureDictionary.Add(structure.Key, structure.Value);
+            DestroyNatureAt(structure.Key);
         }
         temporaryRoadObjects.Clear();
     }
@@ -123,5 +124,22 @@ public class PlacementManager : MonoBehaviour
         }
         temporaryRoadObjects.Clear();
        
+    }
+
+    internal void PlaceObjectOnTheMap(Vector3Int position, GameObject structurePrefab, CellType type)
+    {
+        placementGrid[position.x, position.z] = type;
+        StructureModel structure = CreateANewStructureModel(position, structurePrefab, type);
+        structureDictionary.Add(position, structure);
+        DestroyNatureAt(position);
+    }
+
+    private void DestroyNatureAt(Vector3Int position)
+    {
+        RaycastHit[] hits = Physics.BoxCastAll(position + new Vector3(0, 0.5f, 0), new Vector3(0.5f, 0.5f, 0), transform.up, Quaternion.identity, 1f, 1 << LayerMask.NameToLayer("Nature"));
+        foreach (var item in hits)
+        {
+            Destroy(item.collider.gameObject);
+        }
     }
 }
