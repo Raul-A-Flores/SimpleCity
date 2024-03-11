@@ -24,6 +24,20 @@ namespace SimpleCity.AI
         int index = 0;
         Vector3 endPosition;
 
+        public Color pathColor;
+        PathVisualizer pathVisualizer;
+
+        private void Start()
+        {
+            pathVisualizer = FindObjectOfType<PathVisualizer>();
+            pathColor = UnityEngine.Random.ColorHSV(0f, 1f, 0f, 1f, 0f, 1f);
+        }
+
+        public void ShowPath()
+        {
+            pathVisualizer.ShowPath(pathToGo, this, pathColor);
+        }
+
         public void Initialize(List<Vector3> path)
         {
             pathToGo = path;
@@ -68,12 +82,12 @@ namespace SimpleCity.AI
         private float MoveTheAgent()
         {
             float step = speed * Time.deltaTime;
+            Vector3 endPositionCorrent = new Vector3(endPosition.x, transform.position.y, endPosition.z);
+            transform.position = Vector3.MoveTowards(transform.position, endPositionCorrent, step);
 
-            transform.position = Vector3.MoveTowards(transform.position, endPosition, step);
-
-            var lookDirection = endPosition - transform.position;
+            var lookDirection = endPositionCorrent - transform.position;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDirection), Time.deltaTime * rotationSpeed);
-            return Vector3.Distance(transform.position, endPosition);
+            return Vector3.Distance(transform.position, endPositionCorrent);
         }
 
         private void OnDestroy()

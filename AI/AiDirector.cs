@@ -36,25 +36,30 @@ namespace SimpleCity.AI
             {
                 var startPosition = ((INeedingRoad)startStructure).RoadPosition;
                 var endPosition = ((INeedingRoad)endStructure).RoadPosition;
+
+                var startMarker = placementManager.GetStructureAt(startPosition).GetPedestrianSpawnMarker(startStructure.transform.position);
+                var endMarker = placementManager.GetStructureAt(endPosition).GetPedestrianSpawnMarker(endStructure.transform.position);
+
                 var agent = Instantiate(GetRandomPedestrian(), startPosition, Quaternion.identity);
                 var path = placementManager.GetPathBetween(startPosition, endPosition, true);
                 if (path.Count > 0)
                 {
                     path.Reverse();
-                    List<Vector3> agentPath = GetPedestrianPath(path, startPosition, endPosition);
+                    List<Vector3> agentPath = GetPedestrianPath(path, startMarker.Position, endMarker.Position);
                     var aiAgent = agent.GetComponent<AIAgent>();
-                    aiAgent.Initialize(new List<Vector3>(path.Select(x => (Vector3)x).ToList()));
+                    aiAgent.Initialize(agentPath);
+                   // aiAgent.Initialize(new List<Vector3>(path.Select(x => (Vector3)x).ToList()));
                 }
             }
         }
 
-        private List<Vector3> GetPedestrianPath(List<Vector3Int> path, Vector3Int startPosition, Vector3Int endPosition)
+        private List<Vector3> GetPedestrianPath(List<Vector3Int> path, Vector3 startPosition, Vector3 endPosition)
         {
 
             graph.ClearGraph();
             CreateAGraph(path);
             Debug.Log(graph);
-            return null;
+            return AdjacencyGraph.AStarSearch(graph,startPosition, endPosition);
         }
 
         private void CreateAGraph(List<Vector3Int> path)

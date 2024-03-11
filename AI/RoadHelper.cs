@@ -23,7 +23,7 @@ namespace SimpleCity.AI {
             return GetClosestMarkerTo(structurePosition, pedestrianMarkers);
         }
 
-        private Marker GetClosestMarkerTo(Vector3 structurePosition, List<Marker> pedestrianMarkers)
+        private Marker GetClosestMarkerTo(Vector3 structurePosition, List<Marker> pedestrianMarkers, bool isCorner = false)
         {
             if(isCorner)
             {
@@ -60,7 +60,7 @@ namespace SimpleCity.AI {
 
         public Vector3 GetClosestPedestrianPosition(Vector3 currentPosition)
         {
-            return GetClosestMarkerTo(currentPosition, pedestrianMarkers).Position;
+            return GetClosestMarkerTo(currentPosition, pedestrianMarkers, isCorner).Position;
 
         }
 

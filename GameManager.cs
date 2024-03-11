@@ -1,4 +1,5 @@
-﻿using SVS;
+﻿using SimpleCity.AI;
+using SVS;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
 
     public ObjectDetector objectDetector;
 
+    public PathVisualizer pathVisualizer;
+
     void Start()
     {
         uiController.OnRoadPlacement += RoadPlacementHandler;
@@ -29,6 +32,18 @@ public class GameManager : MonoBehaviour
     {
         ClearInputActions();
         uiController.ResetButtonColor();
+        pathVisualizer.ResetPath();
+        inputManager.OnMouseClick += TrySelectingAgent;
+    }
+
+    private void TrySelectingAgent(Ray ray)
+    {
+        GameObject hitObject = objectDetector.RaycastAll(ray);
+        if(hitObject != null)
+        {
+            var agentScript = hitObject.GetComponent<AIAgent>();
+            agentScript?.ShowPath();
+        }
     }
 
     private void BigStructurePlacement()
